@@ -61,6 +61,7 @@ statementBase
     | supportedRecoverStatement         #supportedRecoverStatementAlias
     | supportedLoadStatement            #supportedLoadfStatementAlias
     | unsupportedStatement              #unsupported
+    | supportedAdminStatement           #supportedAdminStatementAlias
     ;
 
 
@@ -482,7 +483,6 @@ unsupportedAdminStatement
     | ADMIN COMPACT TABLE baseTableRef wildWhere?                                   #adminCompactTable
     | ADMIN SET (FRONTEND | (ALL FRONTENDS)) CONFIG
         (LEFT_PAREN propertyItemList RIGHT_PAREN)? ALL?                             #adminSetFrontendConfig
-    | ADMIN CHECK tabletList properties=propertyClause?                             #adminCheckTablets
     | ADMIN REBALANCE DISK (ON LEFT_PAREN backends+=STRING_LITERAL
         (COMMA backends+=STRING_LITERAL) RIGHT_PAREN)?                              #adminRebalanceDisk
     | ADMIN CANCEL REBALANCE DISK (ON LEFT_PAREN backends+=STRING_LITERAL
@@ -495,6 +495,10 @@ unsupportedAdminStatement
     | ADMIN SHOW TABLET STORAGE FORMAT VERBOSE?                                     #adminShowTabletStorageFormat
     | ADMIN COPY TABLET tabletId=INTEGER_VALUE properties=propertyClause?           #adminCopyTablet
     | ADMIN SET TABLE name=multipartIdentifier STATUS properties=propertyClause?    #adminSetTableStatus
+    ;
+
+supportedAdminStatement
+    : ADMIN CHECK tabletList properties=propertyClause?                             #adminCheckTablets
     ;
 
 baseTableRef

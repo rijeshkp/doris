@@ -48,6 +48,7 @@ import org.apache.doris.mtmv.MTMVRefreshSchedule;
 import org.apache.doris.mtmv.MTMVRefreshTriggerInfo;
 import org.apache.doris.nereids.DorisParser;
 import org.apache.doris.nereids.DorisParser.AddConstraintContext;
+import org.apache.doris.nereids.DorisParser.AdminCheckTabletsContext;
 import org.apache.doris.nereids.DorisParser.AggClauseContext;
 import org.apache.doris.nereids.DorisParser.AggStateDataTypeContext;
 import org.apache.doris.nereids.DorisParser.AliasQueryContext;
@@ -424,6 +425,7 @@ import org.apache.doris.nereids.trees.plans.PlanType;
 import org.apache.doris.nereids.trees.plans.algebra.Aggregate;
 import org.apache.doris.nereids.trees.plans.algebra.SetOperation.Qualifier;
 import org.apache.doris.nereids.trees.plans.commands.AddConstraintCommand;
+import org.apache.doris.nereids.trees.plans.commands.AdminCheckTabletsCommand;
 import org.apache.doris.nereids.trees.plans.commands.AlterMTMVCommand;
 import org.apache.doris.nereids.trees.plans.commands.AlterRoleCommand;
 import org.apache.doris.nereids.trees.plans.commands.AlterStorageVaultCommand;
@@ -4398,4 +4400,19 @@ public class LogicalPlanBuilder extends DorisParserBaseVisitor<Object> {
         });
         return new ShowTabletsBelongCommand(tabletIdLists);
     }
+
+    @Override
+    public LogicalPlan visitAdminCheckTablets(AdminCheckTabletsContext ctx) {
+        List<Long> tabletIdLists = new ArrayList<>();
+        if (ctx.tabletList() != null) {
+            ctx.tabletList().tabletIdList.stream().forEach(tabletToken -> {
+                tabletIdLists.add(Long.parseLong(tabletToken.getText()));
+            });
+        }
+        Map<String, String> properties = ctx.properties != null
+                ? Maps.newHashMap(visitPropertyClause(ctx.properties))
+                : Maps.newHashMap();
+        return new AdminCheckTabletsCommand(tabletIdLists, properties);
+    }
 }
+

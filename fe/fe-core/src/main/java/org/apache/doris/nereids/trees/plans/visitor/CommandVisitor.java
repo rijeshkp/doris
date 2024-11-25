@@ -18,6 +18,7 @@
 package org.apache.doris.nereids.trees.plans.visitor;
 
 import org.apache.doris.nereids.trees.plans.commands.AddConstraintCommand;
+import org.apache.doris.nereids.trees.plans.commands.AdminCheckTabletsCommand;
 import org.apache.doris.nereids.trees.plans.commands.AlterJobStatusCommand;
 import org.apache.doris.nereids.trees.plans.commands.AlterMTMVCommand;
 import org.apache.doris.nereids.trees.plans.commands.AlterRoleCommand;
@@ -437,5 +438,9 @@ public interface CommandVisitor<R, C> {
 
     default R visitShowTabletsBelongCommand(ShowTabletsBelongCommand showTabletBelongCommand, C context) {
         return visitCommand(showTabletBelongCommand, context);
+    }
+
+    default R visitAdminCheckTabletsCommand(AdminCheckTabletsCommand adminCheckTabletsCommand, C context) {
+        return visitCommand(adminCheckTabletsCommand, context);
     }
 }
